@@ -1,0 +1,15 @@
+{
+  "name": "mario-knows",
+  "version": "1.0.0",
+  "description": "this is a shitpost",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "LiterallyFabian",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.3",
+    "jimp": "^0.16.1"
+  }
+}
