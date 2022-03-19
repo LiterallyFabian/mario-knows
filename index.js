@@ -2,30 +2,42 @@ const http = require('http');
 const express = require('express');
 const Jimp = require('jimp');
 const fs = require('fs');
+const CronJob = require('cron').CronJob;
 
 const app = express();
 app.set('trust proxy', 1)
 
 app.get('/mario:ext', (req, res) => {
+    // get ip
     let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
     ip = ip.split(',')[0];
 
     if (ip == "::1") // localhost
         ip = "192.123.45.67";
 
-    let path = __dirname + '/' + ip + ".jpg";
-
+    // create image
+    let path = `${__dirname}/tmp/${ip}.jpg`;
     fs.access(path, fs.F_OK, (err) => {
-        if (err) {
-            createImg(ip, (err, path) => {
+        if (err) { // file does not exist
+            createImg(ip, (err, imgpath) => {
                 if (err) throw err;
-                res.sendFile(__dirname + '/tmp/' + ip + ".jpg");
+                res.sendFile(path);
             });
             return
         }
 
-        res.sendFile(__dirname + '/tmp/' + ip + ".jpg");
-    })
+        res.sendFile(path); // file already exists
+    });
+
+    // delete the file after 10 minutes
+    setTimeout(() => {
+        fs.access(path, fs.F_OK, (err) => {
+            if (err) return;
+            fs.unlink(path, (err) => {
+                if (err) throw err;
+            });
+        });
+    }, 1000 * 60 * 10);
 });
 
 const port = 3000;
@@ -44,7 +56,7 @@ function createImg(ip, callback) {
     let img;
     let path = `tmp/${ip}.jpg`;
 
-    if (!fs.existsSync("tmp")){
+    if (!fs.existsSync("tmp")) {
         fs.mkdirSync("tmp");
     }
 
