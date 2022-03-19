@@ -13,7 +13,7 @@ app.get('/mario:ext', (req, res) => {
     ip = ip.split(',')[0];
 
     if (ip == "::1") // localhost
-        ip = "192.123.45.67";
+        ip = "192.0.2.0";
 
     // create image
     let path = `${__dirname}/tmp/${ip}.jpg`;
