@@ -7,7 +7,7 @@ const app = express();
 app.set('trust proxy', 1)
 
 app.get('/mario:ext', (req, res) => {
-    let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
     ip = ip.split(',')[0];
 
     if (ip == "::1") // localhost
